@@ -11,6 +11,6 @@ interface AnimalApi {
     fun getApiKey():Single<ApiKey>
 
     @FormUrlEncoded
-    @POST("getAnimal")
+    @POST("getAnimals")
     fun getAnimal(@Field("key")key:String):Single<List<Animal>      >
 }
