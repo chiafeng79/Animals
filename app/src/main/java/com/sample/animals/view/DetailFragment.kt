@@ -17,6 +17,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.sample.animals.R
 import com.sample.animals.databinding.FragmentDetailBinding
 import com.sample.animals.model.Animal
+import com.sample.animals.model.AnimalPalette
 import com.sample.animals.util.getProgressDrawable
 import com.sample.animals.util.loadImage
 
@@ -42,20 +43,9 @@ class DetailFragment : Fragment() {
         arguments?.let {
             animal = DetailFragmentArgs.fromBundle(it).animal
         }
-
-
-        /*context?.let {
-            dataBinding.animalImg.loadImage(animal?.imageUrl, getProgressDrawable(it))
-        }
-        animalName.text = animal?.name
-        animalLocation.text = animal?.location
-        animalLifespan.text = animal?.lifeSpan
-        animalDiet.text = animal?.diet*/
-
         animal?.imageUrl?.let {
             setupBackgroundColor(it)
         }
-
         dataBinding.animal = animal
     }
 
@@ -71,13 +61,9 @@ class DetailFragment : Fragment() {
                     Palette.from(resource)
                         .generate(){
                             val intColor = it?.lightMutedSwatch?.rgb?:0
-                            dataBinding.animalLayout.setBackgroundColor(intColor)
+                            dataBinding.palette = AnimalPalette(intColor)
                         }
                 }
-
             })
     }
-
-
-
 }

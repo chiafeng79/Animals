@@ -8,12 +8,15 @@
         <variable
             name="animal"
             type="com.sample.animals.model.Animal" />
+        <variable
+            name="palette"
+            type="com.sample.animals.model.AnimalPalette" />
     </data>
 
     <LinearLayout
-        android:id="@+id/animalLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@{palette.color}"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         tools:context=".view.DetailFragment">

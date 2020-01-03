@@ -9,7 +9,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.sample.animals.R
 
 fun getProgressDrawable(context: Context):CircularProgressDrawable{
-
     return CircularProgressDrawable(context).apply {
         strokeWidth = 10f
         centerRadius = 50f
