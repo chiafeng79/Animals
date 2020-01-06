@@ -1,6 +1,7 @@
 package com.sample.animals.di
 
 import com.sample.animals.model.AnimalApi
+import com.sample.animals.model.AnimalApiService
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
@@ -21,5 +22,10 @@ class ApiModule {
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
             .create(AnimalApi::class.java)
+    }
+
+    @Provides
+    fun providerAnimalApiService():AnimalApiService{
+        return AnimalApiService()
     }
 }

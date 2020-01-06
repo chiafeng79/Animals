@@ -46,7 +46,7 @@ class AnimalListAdapter(private val animalList: ArrayList<Animal>) :
 
     override fun onClick(v: View) {
         for (animal in animalList) {
-            if (v.tag == animal) {
+            if (v.tag == animal.name) {
                 val action = ListFragmentDirections.goDetail(animal)
                 Navigation.findNavController(v).navigate(action)
             }
