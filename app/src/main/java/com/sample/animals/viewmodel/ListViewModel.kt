@@ -18,6 +18,10 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class ListViewModel (application: Application): AndroidViewModel(application) {
+    constructor(application: Application, test:Boolean = true):this(application){
+        inject = true
+    }
+
     val animal by lazy {
         MutableLiveData<List<Animal>>()
     }
@@ -37,6 +41,16 @@ class ListViewModel (application: Application): AndroidViewModel(application) {
     lateinit var prefs:SharedPreferencesHelper
 
     private var invalidApiKey = false
+    private var inject = false
+
+    fun inject(){
+        if (!inject){
+            DaggerViewModelComponent.builder()
+                .appModule(AppModule(getApplication()))
+                .build()
+                .inject(this)
+        }
+    }
 
     init {
         DaggerViewModelComponent.builder()
@@ -48,6 +62,7 @@ class ListViewModel (application: Application): AndroidViewModel(application) {
 
 
     fun refresh(){
+        inject()
         loading.value = true
         invalidApiKey = false
         val key = prefs.getApiKey()
@@ -59,6 +74,7 @@ class ListViewModel (application: Application): AndroidViewModel(application) {
     }
 
     fun hardRefresh(){
+        inject()
         loading.value = true
         getKey()
     }
