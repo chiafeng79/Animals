@@ -14,14 +14,14 @@ open class PrefsModule {
     @Provides
     @Singleton
     @TypeOfContext(CONTEXT_APP)
-    open fun providerSharedPreference(app:Application):SharedPreferencesHelper{
+    open fun provideSharedPreference(app:Application):SharedPreferencesHelper{
         return SharedPreferencesHelper(app)
     }
 
     @Provides
     @Singleton
     @TypeOfContext(CONTEXT_ACTIVITY)
-    fun provideActivity(activity:AppCompatActivity):SharedPreferencesHelper{
+    fun provideActivitySharedPreferences(activity:AppCompatActivity):SharedPreferencesHelper{
         return SharedPreferencesHelper(activity)
     }
 }

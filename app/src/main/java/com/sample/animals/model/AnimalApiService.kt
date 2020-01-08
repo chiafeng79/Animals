@@ -10,17 +10,17 @@ import javax.inject.Inject
 class AnimalApiService {
 
     @Inject
-    lateinit var api:AnimalApi
+    lateinit var api: AnimalApi
 
     init {
         DaggerApiComponent.create().inject(this)
     }
 
-    fun getApiKey():Single<ApiKey>{
+    fun getApiKey(): Single<ApiKey> {
         return api.getApiKey()
     }
 
-    fun getAnimal(key:String):Single<List<Animal>>{
+    fun getAnimal(key: String): Single<List<Animal>> {
         return api.getAnimal(key)
     }
 

@@ -23,54 +23,56 @@ import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import java.util.concurrent.Executor
 
-class ListVIewModelTest {
+class ListViewModelTest {
     @get:Rule
     var rule = InstantTaskExecutorRule()
 
     @Mock
-    lateinit var animalService:AnimalApiService
+    lateinit var animalService: AnimalApiService
 
     @Mock
-    lateinit var prefs:SharedPreferencesHelper
+    lateinit var prefs: SharedPreferencesHelper
+
     val application = Mockito.mock(Application::class.java)
-    val listViewModel = ListViewModel(application)
+
+    val listViewModel = ListViewModel(application, true)
 
     private val key = "Test Key"
 
     @Before
-    fun setup(){
+    fun setup() {
         MockitoAnnotations.initMocks(this)
 
         DaggerViewModelComponent.builder()
             .appModule(AppModule(application))
-            .apiModule(ApiModuelTest(animalService))
+            .apiModule(ApiModuleTest(animalService))
             .prefsModule(PrefsModuleTest(prefs))
             .build()
             .inject(listViewModel)
     }
 
-     @Test
-     fun getAnimalSuccess(){
-         Mockito.`when`(prefs.getApiKey()).thenReturn(key)
-         val animal = Animal("cow",null,null,null,null,null,null)
-         val animalList = listOf(animal)
+    @Test
+    fun getAnimalSuccess() {
+        Mockito.`when`(prefs.getApiKey()).thenReturn(key)
+        val animal = Animal("cow", null, null, null, null, null, null)
+        val animalList = listOf(animal)
 
 
-         val testSingle = Single.just(animalList)
-         Mockito.`when`(animalService.getAnimal(key)).thenReturn(testSingle)
+        val testSingle = Single.just(animalList)
+        Mockito.`when`(animalService.getAnimal(key)).thenReturn(testSingle)
 
-         listViewModel.refresh()
+        listViewModel.refresh()
 
-         Assert.assertEquals(1, listViewModel.animal.value?.size)
-         Assert.assertEquals(false, listViewModel.loadError.value)
-         Assert.assertEquals(false, listViewModel.loading.value)
-     }
+        Assert.assertEquals(1, listViewModel.animal.value?.size)
+        Assert.assertEquals(false, listViewModel.loadError.value)
+        Assert.assertEquals(false, listViewModel.loading.value)
+    }
 
     @Test
-    fun getAnimalFailure(){
+    fun getAnimalFailure() {
         Mockito.`when`(prefs.getApiKey()).thenReturn(key)
         val testSingle = Single.error<List<Animal>>(Throwable())
-        val keySingle = Single.just(ApiKey("OK",key))
+        val keySingle = Single.just(ApiKey("OK", key))
 
         Mockito.`when`(animalService.getAnimal(key)).thenReturn(testSingle)
         Mockito.`when`(animalService.getApiKey()).thenReturn(keySingle)
@@ -82,13 +84,13 @@ class ListVIewModelTest {
     }
 
     @Test
-    fun getKeySuccess(){
+    fun getKeySuccess() {
         Mockito.`when`(prefs.getApiKey()).thenReturn(null)
         val apiKey = ApiKey("OK", key)
         val keySingle = Single.just(apiKey)
 
         Mockito.`when`(animalService.getApiKey()).thenReturn(keySingle)
-        val animal = Animal("cow",null,null,null,null,null,null)
+        val animal = Animal("cow", null, null, null, null, null, null)
         val animalList = listOf(animal)
 
         val testSingle = Single.just(animalList)
@@ -102,9 +104,9 @@ class ListVIewModelTest {
     }
 
     @Test
-    fun getKeyFailure(){
+    fun getKeyFailure() {
         Mockito.`when`(prefs.getApiKey()).thenReturn(null)
-        val keySingle= Single.error<ApiKey>(Throwable())
+        val keySingle = Single.error<ApiKey>(Throwable())
 
         Mockito.`when`(animalService.getApiKey()).thenReturn(keySingle)
 
@@ -113,19 +115,17 @@ class ListVIewModelTest {
         Assert.assertEquals(null, listViewModel.animal.value)
         Assert.assertEquals(false, listViewModel.loading.value)
         Assert.assertEquals(true, listViewModel.loadError.value)
-
     }
 
     @Before
-    fun setupRxSchedule(){
-        val immediate = object: Scheduler(){
+    fun setupRxSchedulers() {
+        val immediate = object : Scheduler() {
             override fun createWorker(): Worker {
-                return ExecutorScheduler.ExecutorWorker(Executor { it.run()}, true)
+                return ExecutorScheduler.ExecutorWorker(Executor { it.run() }, true)
             }
         }
 
-        RxJavaPlugins.setInitNewThreadSchedulerHandler { schedular -> immediate }
-        RxAndroidPlugins.setInitMainThreadSchedulerHandler { schedular -> immediate }
-
+        RxJavaPlugins.setInitNewThreadSchedulerHandler { scheduler -> immediate }
+        RxAndroidPlugins.setInitMainThreadSchedulerHandler { scheduler -> immediate }
     }
 }

@@ -14,8 +14,7 @@ open class ApiModule {
     private val BASE_URL = "https://us-central1-apis-4674e.cloudfunctions.net"
 
     @Provides
-    fun providerAnimalApi():AnimalApi{
-
+    fun provideAnimalApi(): AnimalApi {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -25,7 +24,7 @@ open class ApiModule {
     }
 
     @Provides
-    open fun providerAnimalApiService():AnimalApiService{
+    open fun provideAnimalApiService(): AnimalApiService {
         return AnimalApiService()
     }
 }

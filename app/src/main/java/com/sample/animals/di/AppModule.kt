@@ -5,7 +5,8 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class AppModule(val app:Application) {
+class AppModule(val app: Application) {
+
     @Provides
-    fun providerApp():Application = app
+    fun provideApp(): Application = app
 }

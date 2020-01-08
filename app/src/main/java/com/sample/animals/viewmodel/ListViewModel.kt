@@ -17,34 +17,35 @@ import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class ListViewModel (application: Application): AndroidViewModel(application) {
-    constructor(application: Application, test:Boolean = true):this(application){
-        inject = true
+class ListViewModel(application: Application) : AndroidViewModel(application) {
+    constructor(application: Application, test: Boolean = true) : this(application) {
+        injected = true
     }
 
     val animal by lazy {
         MutableLiveData<List<Animal>>()
     }
-    val loadError by lazy{
+    val loadError by lazy {
         MutableLiveData<Boolean>()
     }
     val loading by lazy {
         MutableLiveData<Boolean>()
     }
+
     private val disposable = CompositeDisposable()
 
     @Inject
-    lateinit var apiService:AnimalApiService
+    lateinit var apiService: AnimalApiService
 
     @Inject
     @field:TypeOfContext(CONTEXT_APP)
-    lateinit var prefs:SharedPreferencesHelper
+    lateinit var prefs: SharedPreferencesHelper
 
     private var invalidApiKey = false
-    private var inject = false
+    private var injected = false
 
-    fun inject(){
-        if (!inject){
+    fun inject() {
+        if (!injected) {
             DaggerViewModelComponent.builder()
                 .appModule(AppModule(getApplication()))
                 .build()
@@ -52,48 +53,41 @@ class ListViewModel (application: Application): AndroidViewModel(application) {
         }
     }
 
-    init {
-        DaggerViewModelComponent.builder()
-            .appModule(AppModule(getApplication()))
-            .build()
-            .inject(this)
-    }
 
-
-
-    fun refresh(){
+    fun refresh() {
         inject()
         loading.value = true
         invalidApiKey = false
         val key = prefs.getApiKey()
-        if (key.isNullOrEmpty()){
+        if (key.isNullOrEmpty()) {
             getKey()
-        }else{
+        } else {
             getAnimal(key)
         }
     }
 
-    fun hardRefresh(){
+    fun hardRefresh() {
         inject()
         loading.value = true
         getKey()
     }
 
-    private fun getKey(){
+    private fun getKey() {
         disposable.add(
             apiService.getApiKey()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<ApiKey>(){
+                .subscribeWith(object : DisposableSingleObserver<ApiKey>() {
                     override fun onSuccess(t: ApiKey) {
-                        if (t.key.isNullOrEmpty()){
+                        if (t.key.isNullOrEmpty()) {
                             loadError.value = true
                             loading.value = false
-                        }else{
+                        } else {
                             prefs.saveApiKey(t.key)
                             getAnimal(t.key)
                         }
                     }
+
                     override fun onError(e: Throwable) {
                         e.printStackTrace()
                         loadError.value = false
@@ -103,12 +97,12 @@ class ListViewModel (application: Application): AndroidViewModel(application) {
         )
     }
 
-    private fun getAnimal(key:String){
+    private fun getAnimal(key: String) {
         disposable.add(
             apiService.getAnimal(key)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<List<Animal>>(){
+                .subscribeWith(object : DisposableSingleObserver<List<Animal>>() {
                     override fun onSuccess(t: List<Animal>) {
                         loadError.value = false
                         animal.value = t
@@ -116,10 +110,10 @@ class ListViewModel (application: Application): AndroidViewModel(application) {
                     }
 
                     override fun onError(e: Throwable) {
-                        if (!invalidApiKey){
+                        if (!invalidApiKey) {
                             invalidApiKey = true
                             getKey()
-                        }else{
+                        } else {
                             e.printStackTrace()
                             loading.value = false
                             animal.value = null
