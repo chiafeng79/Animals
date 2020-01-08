@@ -90,8 +90,8 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
 
                     override fun onError(e: Throwable) {
                         e.printStackTrace()
-                        loadError.value = false
-                        loading.value = true
+                        loadError.value = true
+                        loading.value = false
                     }
                 })
         )
